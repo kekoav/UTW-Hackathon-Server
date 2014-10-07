@@ -41,7 +41,7 @@ def parse_data(filename):
 
                 elif key == 'result_description':
 
-                    if value.lower().find('TD') > 0:
+                    if value.lower().find('td') > 0:
                         special_type = 'touchdown'
                     if value.lower().find('fumble') > 0:
                         special_type = 'fumble'

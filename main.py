@@ -25,6 +25,7 @@ class GamesListHandler(tornado.web.RequestHandler):
                 "id": 'FFC97706-E3B3-4224-B602-DD7EBF9D32A6',
                 "date": "2014-10-03T20:15:00",
                 "name": "Utah State @ BYU"
+
             },
             {
                 "id": 'FC8556DB-462A-4C24-AA01-BFB0CFB6566C',
@@ -43,14 +44,30 @@ class GameHandler(tornado.web.RequestHandler):
                 'teams': {
                     'home': {
                         'name': "BYU",
-                        'color': "#0000ff"
+                        'color': "#0000ff",
+                        'logo': 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/252.png&w=128&h=128&transparent=true'
                     },
                     'away': {
                         'name': 'Utah State',
                         'color': '#ffffff',
+                        'logo': 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/328.png&w=128&h=128&transparent=true'
                     }
                 }
-            }
+            },
+            'FC8556DB-462A-4C24-AA01-BFB0CFB6566C':{ # Utah vs UCLA
+                'teams': {
+                    'away': {
+                        'name': "Utah",
+                        'color': "#ff0000",
+                        'logo': 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/254.png&w=128&h=128&transparent=true'
+                    },
+                    'home': {
+                        'name': 'UCLA',
+                        'color': '#ff0012',
+                        'logo': 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/26.png&w=128&h=128&transparent=true'
+                    }
+                }
+            },
         }
 
         game_info = all_game_info[game_id]
