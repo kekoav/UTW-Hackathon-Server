@@ -11,6 +11,8 @@ import tornado.websocket
 import json
 from tornado import gen
 
+from game_data import GAME_PLAYS
+
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("Hey the server is running but you didn't call the right endpoint. SUCKA.")
@@ -41,11 +43,11 @@ class GameHandler(tornado.web.RequestHandler):
                 'teams': {
                     'home': {
                         'name': "BYU",
-                        'color': "blue"
+                        'color': "#0000ff"
                     },
                     'away': {
                         'name': 'Utah State',
-                        'color': 'white',
+                        'color': '#ffffff',
                     }
                 }
             }
@@ -78,18 +80,22 @@ class StreamHandler(tornado.websocket.WebSocketHandler):
 
         if command.lower() == 'start':
             game_id = message_json.get('game_id', None)
+            speed = message_json.get('speed', 3)
 
-            if game_id is None:
+            if game_id is None or game_id not in GAME_PLAYS:
                 self.write_error("Game with id '%s' not found'" % game_id)
                 return
 
+            plays = GAME_PLAYS[game_id]
             self.stream_open = True
 
-            value = 0
-            while self.stream_open:
-                self.write_message({'type': 'test', 'value':value})
-                value += 1
-                yield gen.Task(tornado.ioloop.IOLoop.instance().add_timeout, time.time() + 1)
+            index = 0
+            while self.stream_open and index < len(plays):
+                data = {'type': 'play', 'index':index}
+                data.update(plays[index])
+                self.write_message(data)
+                index += 1
+                yield gen.Task(tornado.ioloop.IOLoop.instance().add_timeout, time.time() + speed)
 
         elif command.lower() == 'stop':
             self.stream_open = False
