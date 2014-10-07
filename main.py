@@ -2,10 +2,14 @@ __author__ = 'kekoa'
 
 
 import os
+import time
+
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+import tornado.websocket
 import json
+from tornado import gen
 
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):
@@ -51,8 +55,47 @@ class GameHandler(tornado.web.RequestHandler):
 
         self.write(game_info)
 
+class StreamHandler(tornado.websocket.WebSocketHandler):
+    def check_origin(self, origin):
+        return True
+
+    def open(self):
+        print "client connected"
+        self.write_message({'type': "Hello! you are connected to the web socket!"})
+
+    @gen.engine
+    def on_message(self, message):
+        message_json = json.loads(message)
+        command = message_json.get('command', None)
+
+        if command.lower() == 'start':
+            game_id = message_json.get('game_id', None)
+
+            if game_id is None:
+                self.write_message({'type': 'Error', 'message': "Game with id '%s' not found'" % game_id})
+                return
+
+            self.stream_open = True
+
+            value = 0
+            while self.stream_open:
+                self.write_message({'type': 'Test', 'value':value})
+                value += 1
+                yield gen.Task(tornado.ioloop.IOLoop.instance().add_timeout, time.time() + 1)
+
+        elif command.lower() == 'stop':
+                self.stream_open = False
+        else:
+            self.write_message({'type': 'Error', 'message': "Command '%s' not found" % command})
+
+    def on_close(self):
+        # Clean-up
+        print "client disconnected"
+
+
 def main():
     application = tornado.web.Application([
+        (r'/stream', StreamHandler),
         (r'/game/([A-Z0-9\-]+)', GameHandler),
         (r'/games', GamesListHandler),
         (r"/", HomeHandler),
