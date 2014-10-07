@@ -61,7 +61,15 @@ class StreamHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         print "client connected"
-        self.write_message({'type': "Hello! you are connected to the web socket!"})
+        self.write_info("Hello! you are connected to the web socket!")
+
+    def write_error(self, message):
+
+        self.write_message({'type':'error', 'message':message})
+
+    def write_info(self, message):
+
+        self.write_message({'type':'info', 'message':message})
 
     @gen.engine
     def on_message(self, message):
@@ -72,21 +80,23 @@ class StreamHandler(tornado.websocket.WebSocketHandler):
             game_id = message_json.get('game_id', None)
 
             if game_id is None:
-                self.write_message({'type': 'Error', 'message': "Game with id '%s' not found'" % game_id})
+                self.write_error("Game with id '%s' not found'" % game_id)
                 return
 
             self.stream_open = True
 
             value = 0
             while self.stream_open:
-                self.write_message({'type': 'Test', 'value':value})
+                self.write_message({'type': 'test', 'value':value})
                 value += 1
                 yield gen.Task(tornado.ioloop.IOLoop.instance().add_timeout, time.time() + 1)
 
         elif command.lower() == 'stop':
-                self.stream_open = False
+            self.stream_open = False
+            self.write_info('Game stream stopped')
+
         else:
-            self.write_message({'type': 'Error', 'message': "Command '%s' not found" % command})
+            self.write_error("Command '%s' not found" % command)
 
     def on_close(self):
         # Clean-up
