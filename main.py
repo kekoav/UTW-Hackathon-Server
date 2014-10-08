@@ -48,7 +48,7 @@ class GameHandler(tornado.web.RequestHandler):
                         'logo': 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/252.png&w=128&h=128&transparent=true'
                     },
                     'away': {
-                        'name': 'Utah State',
+                        'name': 'USU',
                         'color': '#ffffff',
                         'logo': 'http://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/328.png&w=128&h=128&transparent=true'
                     }
