@@ -79,7 +79,7 @@ def parse_data(filename):
                         distance = int(value['distance'])
 
                         team = value['team']
-                        yard_line = int(value['yard_line'])
+                        yard_line = 50 - int(value['yard_line'])
 
                         if team != 'BYU':
                             ## WARNING: hackathon hack -- byu is always the home team
