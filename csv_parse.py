@@ -72,6 +72,8 @@ def parse_data(filename):
                     result = LOCATION_REGEX.match(value)
 
                     if result:
+                        dict['location_description'] = value
+
                         value = result.groupdict()
                         down = int(value['down'])
                         distance = int(value['distance'])
